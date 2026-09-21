@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'jobbook-pwa-2.8.2'
+const CACHE_VERSION = 'jobbook-pwa-3.0.0'
 const APP_SHELL = [
   './',
   './index.html',
