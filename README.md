@@ -6,10 +6,10 @@ Published site: https://SeanLyee.github.io/Jobbook-web/
 
 ## 更新日志 / Changelog
 
-[查看完整版本更新日志（v1.0.0–v4.0.0）](CHANGELOG.md)。内容与网页版「设置 → 版本与更新日志」一致；后续发布时由应用中的同一份版本记录生成。
+[查看完整版本更新日志（v1.0.0–v5.0.0）](CHANGELOG.md)。内容与网页版「设置 → 版本与更新日志」一致；后续发布时由应用中的同一份版本记录生成。
 
 Jobbook remains local-first: data is stored in each browser's IndexedDB. To transfer data between devices, export a `.zip` backup on the old device and import it on the new device. Older `.jobbook` backups are still accepted. GitHub Pages does not sync data. Before restoring, the app previews the actual record counts and rejects empty backups.
 
 The hosted build includes free on-device Chinese OCR. Its model files are downloaded on the first screenshot recognition and then cached by the browser. Screenshots remain local; DashScope is optional and only used when explicitly configured. Import/export and the existing library and resume features remain available.
 
-Version 4.0.0 adds Job Discovery: company playlists, official Greenhouse/Lever job sources, explainable matching, manual company/job entry, and application-status tracking. Job discovery records remain local and are included in ZIP backups. Version 3.0.0 Career Knowledge remains available unchanged.
+Version 5.0.0 expands Job Discovery with ten sourced company rankings (1,797 memberships / 1,395 deduplicated companies), catalog search, reviewed text and on-device screenshot OCR imports, and a pausable batch-refresh queue. Automatic job reads remain limited to supported official Greenhouse/Lever sources; ordinary company sites stay explicit manual fallbacks. Ranking sources, imported screenshots, jobs, and application tracking remain local and are included in ZIP backups.
