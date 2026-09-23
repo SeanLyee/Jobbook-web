@@ -1,15 +1,116 @@
-# Jobbook Web
+# Jobbook
 
-This repository contains only the static, hosted build of Jobbook. It does not include personal records, IndexedDB data, backup files, or API keys.
+Local-first 求职截图整理工具。当前实现严格对应 `Jobbook_Codex_Product_Spec_v1.0.md` 的 P0 Vertical Slice；旧 Milestone 1 演示与 Figma Import 不再是当前产品范围。
 
-Published site: https://SeanLyee.github.io/Jobbook-web/
+当前应用版本：`4.1.0`。设置页内置从 `1.0.0` 至当前版本的完整分组更新日志；版本判断遵循 [VERSIONING.md](VERSIONING.md)，同一份记录可用 `pnpm changelog` 生成根目录的 [CHANGELOG.md](CHANGELOG.md)，供 GitHub 页面同步。
 
-## 更新日志 / Changelog
+## 直接打开
 
-[查看完整版本更新日志（v1.0.0–v2.1.0）](CHANGELOG.md)。版本编号已经按 [JobBook 版本编号守则](VERSIONING.md) 校准；内容与网页版「设置 → 版本与更新日志」一致。
+- 推荐：双击 `D:\工作文档\Jobbook\启动 Jobbook.cmd`，然后访问 `http://127.0.0.1:5173/`
+- 可转发单文件：`D:\工作文档\Jobbook-可审核单文件.html`
 
-Jobbook remains local-first: data is stored in each browser's IndexedDB. To transfer data between devices, export a `.zip` backup on the old device and import it on the new device. Older `.jobbook` backups are still accepted. GitHub Pages does not sync data. Before restoring, the app previews the actual record counts and rejects empty backups.
+单文件已内嵌 CSS、JavaScript、PP-OCRv6-tiny 中文 OCR 模型、推理运行库、v1.0 产品文档和审核说明，可直接双击，也可发送给 ChatGPT 审核。浏览器数据仍保存在打开该文件的本机 IndexedDB 中。
 
-The hosted build includes free on-device Chinese OCR. Its model files are downloaded on the first screenshot recognition and then cached by the browser. Screenshots remain local; DashScope is optional and only used when explicitly configured. Import/export and the existing library and resume features remain available.
+## P0 已实现
 
-Version 2.0.0 introduced Job Discovery as the user-approved major product generation. Version 2.1.0 expands it with ten sourced company rankings (1,797 memberships / 1,395 deduplicated companies), catalog search, reviewed text and on-device screenshot OCR imports, and a pausable batch-refresh queue. Automatic job reads remain limited to supported official Greenhouse/Lever sources; ordinary company sites stay explicit manual fallbacks. Ranking sources, imported screenshots, jobs, and application tracking remain local and are included in ZIP backups.
+- “职位发现”内置 10 份带原始来源的公司名单，涵盖《财富》世界/中国 500 强、中国互联网前 100，以及上海企业、制造业、服务业、民营、新兴产业、外企就业与制造业单项冠军名单；共 1797 条名单记录、1395 家去重公司。
+- 支持跨名单搜索并加入自定义名单，也可粘贴榜单文本或导入截图；截图使用本地 OCR，导入前可校对名次、公司名和地区，原图、识别文本和来源一并进入 ZIP 备份。
+- 手动刷新当前名单时逐家公司自动定位，显示进度、成功、失败和需手工查看数量，并支持暂停、继续、停止和失败重试。
+- 支持从公司官方 Greenhouse 招聘板手工刷新上海等目标城市职位；Lever 连接器在允许跨域的环境中可用，失败时明确回退到打开官网和手工录入。
+- 岗位表记录适配分、解释原因、在招/下架以及未处理、想投、已投递、面试、Offer、未通过和不考虑状态；不自动填写或提交申请。
+- 目标城市、岗位关键词、技能词、求职阶段、排除词和最低薪资可编辑；公司、岗位和投递记录进入 IndexedDB 与 ZIP 备份。
+- 粘贴、拖拽、文件选择导入 PNG / JPEG / WEBP，原图先落 IndexedDB
+- 默认内置 PaddleOCR PP-OCRv6-tiny：不需要 API Key、截图不上传、`file://` 离线单文件可用
+- 可选阿里云百炼 Qwen-VL OpenAI-compatible Provider 与明确标识的 Mock Recognition
+- 高精度识别：保留最高 2560px 整图，并额外提交正文放大区域；Post 正文执行独立第二遍逐字转录
+- 待处理：可在“新建帖子 / 补充已有正文 / 添加评论”三个实际任务之间切换，并编辑、重试、保存草稿或确认去向
+- 评论可选择任意已有 Post；未选择时进入“未归类评论”，之后仍可重新归入，不会消失
+- 帖子详情的评论区可直接导入一张或多张评论截图；系统会跳过内容类型询问，识别后立即归入当前帖子，识别失败时也保留可编辑占位评论
+- 已导入或手动输入的评论均可编辑作者和正文，也可单独删除；删除上级评论不会误删其回复
+- 小红书平板端采用左图右文布局，手机端采用上图下文布局；确认时从原截图裁切并保存封面
+- 小红书空间识别区分左侧“图片里的字”和右侧真实正文；同图可分离帖子与评论，纯评论长图按层主/正文/互动行/留白拆成多条
+- 正文要求逐字完整识别，不做摘要；支持连续添加任意数量的正文续页、人工校对、追加和完整正文编辑
+- 帖子图片支持点击切换、放大翻页、调整阅读顺序和单张删除；帖子支持二次确认后完整删除
+- 独立“简历模板”资料区：每张图片建立一份单页模板；主预览保持 A4 纸张比例，图片下方紧接三个方形评价按钮、名称和备注，方向标签默认折叠；点击主图进入全屏预览后可下载原图
+- Tag 框支持直接粘贴整串小红书 `#标签` 并批量拆分；含“简历”的 Tag 会出现专用关联标号
+- 共享标签支持搜索、改名、单处移除和全局删除；改名会同步资料库、简历模板、模板素材和“我的简历”，改成已有名称时自动合并
+- 标签以资料库帖子为保留依据：只要不再被任何帖子使用，就会自动删除，并同步清除简历模板、模板素材和“我的简历”中的该标签引用；内容本身不会被删除
+- 简历模板与“我的简历”的整份简历/模块标签输入都会即时提示匹配项，例如输入“实习”即可看到所有相关标签
+- 简历模板关联资料库帖子时可先搜索，候选区固定显示四行并滚动；已关联帖子列表同样限制高度，帖子增多不会撑满页面
+- 资料库帖子与简历模板可建立双向映射并从两边直接跳转；模板支持“值得学习 / 需要注意 / 反面教材”评价和独立备注
+- 简历模板支持自定义方向/行业/内容标签，并可把其中的文字拆成独立模块素材；素材保留来源模板、标题、正文和多组 Tag
+- 新增独立“职业地图”：local-first 无限 SVG 画布，可建立城市、行业、公司、部门、岗位、要求、技能、投递渠道和笔记节点，支持拖动、缩放、搜索、筛选、命名连线，并关联帖子、简历素材和“我的简历”
+- 职业地图支持节点类型图层多选、全部开启/关闭；连线支持起点/终点箭头、实线/虚线、自定义名称与编号，可组合成小型流程图
+- “职业地图”升级为“职业知识”：在帖子正文、评论和简历资料中选中文字，可创建带来源的词条或补充已有词条，并把词条放入指定地图与自定义图层
+- 图层可以新增、改名、换色和删除；节点支持鼠标副键快速连线与可调曲线，当前可见图层和搜索结果可以按自定义名称导出 PNG 或 SVG
+- 词条、来源摘录、自定义图层和曲线数据均进入 ZIP 备份；旧版数据库及旧备份会自动补齐默认图层
+- “我的简历”新增批注/白板入口：把原有文本模块渲染成 A4 预览，在独立矢量层上用鼠标、触摸或 S Pen 绘制；支持笔、荧光笔、橡皮、撤销/重做、缩放及“S Pen 专用”基础防误触
+- 职业地图、跨资料关联、批注设置与笔迹均进入 IndexedDB 和 `.zip` 备份；原有表和旧 `.jobbook` 备份继续兼容
+- 一级导航新增“我的简历”：可创建多份投递版本，把简历拆成可排序的文本模块，并用多个 Tag 做交集筛选，同时检索模板素材与资料库帖子
+- 参考素材支持整段插入或逐句插入到当前简历模块；插入后仍是可自由改写的草稿，适合跨行业、跨职位组合研究
+- Post / Comment 重建，Active Capture Session 评论关联，回复关系
+- 用户评论与回复
+- 多 Collection、多 Tag、全文搜索与组合筛选；Post 不复制
+- `.zip` 工作区整体导出/导入，旧 `.jobbook` 文件仍可恢复；导出不含 API Key
+- 首页把“快速保存备份 / 导入备份”做成与截图导入并列的强调色快捷卡片；日常内容仍自动保存在当前浏览器，快速保存会生成 `备份_年月日_时分.zip`
+- 导入先显示备份内实际帖子、评论和简历数量，再确认是否替换当前资料；空备份不会覆盖现有内容
+- 设置页可授权专用备份文件夹；本机目标目录为 `D:\工作文档\备份`，Chrome / Edge 首次选择后，后续备份可直接写入该目录；不支持目录权限的浏览器自动回退到下载目录
+- 桌面固定侧栏；手机把导航收成右下角圆形 Jobbook 按钮，点开后显示左侧抽屉；未完成的 Map 不进入一级导航
+- 三星 S22 Ultra 竖屏专项适配：同时判断宽度与竖屏长宽比，即使浏览器把本地文件报告成约 980px 桌面宽度，也会强制进入“图片在上、缩略图横排、作者/标题/正文/标签/编辑区在下”的手机布局
+- 帖子分类编辑区在手机上固定为 2×2 田字格，明确区分 Collection 名称、添加 Collection、批量 Tag 与添加全部 Tag；普通禁用按钮不再错误显示沙漏
+
+## 内置公司名单来源
+
+名单快照生成脚本为 `scripts/build_company_rankings.py`，生成结果为 `src/data/companyRankings.generated.ts`。应用只保存用于个人求职发现的公司名称、名次、地区和来源元数据；具体指标与再利用条款以原始来源为准。
+
+- [2026 Fortune Global 500](https://fortune.com/ranking/global500/)：500 家
+- [2026 Fortune China 500](https://www.fortunechina.com/fortune500/c/2026-07/21/content_475324.htm)：500 家
+- [中国互联网企业综合实力指数（2025）](https://www.isc.org.cn/profile/2025/12/29/f531871d-ded7-4502-bb26-6d829f12707a.pdf)：100 家
+- [2025 上海企业100强](https://m.sme-gov.cn/shanghai/news/80609.html)、[制造业100强](https://m.sme-gov.cn/shanghai/news/81650.html)、[服务业100强](https://m.sme-gov.cn/shanghai/news/81652.html)、[民营企业100强](https://m.sme-gov.cn/shanghai/news/81642.html)、[新兴产业100强](https://m.sme-gov.cn/shanghai/news/81646.html)：各 100 家
+- [上海外商投资企业创造就业百强报告](https://www.shfia.cn/uploads/20260121/429e5c01e92bcc963e8b8dd472786349.pdf)：100 家
+- [2025 上海市制造业单项冠军](https://www.sheitc.sh.gov.cn/cmsres/cf/cfecfe8050de4ece9941f47594b9bffd/efd13bd8c31ba3f1a6984877692cf8f4.pdf)：97 家
+
+## 识别方式
+
+进入“设置”可选择：
+
+- `本地免费 OCR`：默认；模型已封装在单文件中，离线运行。
+- `Qwen 高精度`：需要 API Key，适合更复杂的结构理解。
+- `Mock 流程测试`：不读取文字，仅用于演示和可重复验收。
+
+使用 Qwen 时：
+
+1. 在阿里云百炼创建 API Key。
+2. 选择 `Qwen 高精度`。
+3. 输入 DashScope API Key。
+4. 使用推荐的 `qwen3-vl-plus`；`flash` 更快，但高密度中文小字更容易漏字。
+5. 保存设置后重新导入或在失败 Draft 上点“重新识别”。
+
+API Key 只保存在当前浏览器 `localStorage`，不会进入 `.zip` 导出。由于交付环境没有用户的 API Key，自动验收覆盖 Provider 请求代码与失败保留链路，但不冒充已完成真实账户调用。
+
+Mock Recognition 只用于验证界面与数据链路，不会读取截图文字。Mock 结果会明确提示这一点，不再生成看似真实但与原图无关的一句话。没有 API Key 时仍可在 Inbox 粘贴完整第一页正文，并在帖子里用“补充正文截图”或“手动补充文字”加入后续页面；每页原图都会保留。
+
+旧版本已经确认的帖子不必删除：打开帖子后可使用“从原图提取封面”和“重新识别第 1 页正文”。重新识别只会把结果放入编辑框，必须人工核对并点击保存才会覆盖旧正文。
+
+## 开发与验收
+
+```powershell
+pnpm install
+pnpm dev --host 127.0.0.1
+pnpm typecheck
+pnpm test
+pnpm test:browser
+pnpm test:ocr
+pnpm test:xhs
+pnpm build
+pnpm build:single
+```
+
+浏览器验收要求本地开发服务器位于 `http://127.0.0.1:5173/`。`test:ocr` 直接验证长正文与续页；`test:xhs` 使用真实帖子页和纯评论页验证空间分区及评论拆分。详细结果见 `P0_ACCEPTANCE_RESULTS.md`；截图与导出的验收工作区位于 `artifacts/`。
+
+## P1 未实现
+
+- Annotation / Note
+- Knowledge Map 编辑
+- Service Worker 与可安装 PWA 壳
+- Word / PDF 排版编辑器与成品简历导出；当前“我的简历”是模块化研究与写作工作台
